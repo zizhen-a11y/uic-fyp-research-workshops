@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore prototype UIC FYP Research Workshops for final-year undergraduate students.">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <title>UIC FYP Research Workshops</title>
+  <link rel="preload" href="{{ url_for('static', filename='assets/research-workshop-hero.png') }}" as="image">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <script>window.WORKSHOP_DATA = {{ workshop_data | tojson }};</script>
+  <script src="{{ url_for('static', filename='js/script.js') }}" defer></script>
+</head>
+<body id="top">
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <div class="notice" role="status">
+    <strong>Prototype website:</strong> session dates and registration routes are pending official confirmation.
+  </div>
+
+  <header class="site-header">
+    <div class="nav-shell">
+      <a class="brand" href="#top" aria-label="UIC FYP Research Workshops home">
+        <span class="brand-mark" aria-hidden="true">FYP</span>
+        <span>Research Workshops</span>
+      </a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" aria-label="Open navigation">
+        <span></span><span></span><span></span>
+      </button>
+      <nav id="primary-nav" class="primary-nav" aria-label="Primary navigation">
+        <a href="#about">About</a>
+        <a href="#workshops">Workshops</a>
+        <a href="#schedule">Schedule</a>
+        <a href="#faq">FAQ</a>
+        <a class="nav-cta" href="#register">Register</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-overlay" aria-hidden="true"></div>
+      <div class="content hero-content">
+        <p class="eyebrow">For UIC final-year undergraduates</p>
+        <h1 id="hero-title">UIC FYP Research Workshops</h1>
+        <p class="hero-lead">Build a focused question, work with stronger evidence, and move your final-year project forward with practical research support.</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#workshops">Explore workshops <span aria-hidden="true">&rarr;</span></a>
+          <a class="button button-secondary" href="#register">Make an enquiry</a>
+        </div>
+        <dl class="hero-facts" aria-label="Programme highlights">
+          <div><dt>{{ workshops | length }}</dt><dd>research themes</dd></div>
+          <div><dt>Practical</dt><dd>guided activities</dd></div>
+          <div><dt>Flexible</dt><dd>choose what fits</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <section class="section intro" id="about" aria-labelledby="about-title">
+      <div class="content split-layout">
+        <div>
+          <p class="eyebrow dark">Why join</p>
+          <h2 id="about-title">Research feels clearer when the next step is visible.</h2>
+        </div>
+        <div class="intro-copy">
+          <p>The workshop programme is designed for students who are planning, conducting, or communicating an FYP. Each session focuses on a practical decision you can apply to your own project.</p>
+          <p class="source-note">This case-study prototype presents proposed themes. Final session details must be checked against official UIC announcements.</p>
+        </div>
+      </div>
+      <div class="content outcome-grid" aria-label="Workshop outcomes">
+        <article class="outcome">
+          <span class="outcome-number">01</span>
+          <h3>Frame the project</h3>
+          <p>Turn a broad interest into a question with a workable scope.</p>
+        </article>
+        <article class="outcome">
+          <span class="outcome-number">02</span>
+          <h3>Choose evidence</h3>
+          <p>Find, assess, and organise sources or data that support the study.</p>
+        </article>
+        <article class="outcome">
+          <span class="outcome-number">03</span>
+          <h3>Communicate clearly</h3>
+          <p>Connect analysis, findings, and presentation into a coherent story.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section workshops-section" id="workshops" aria-labelledby="workshops-title">
+      <div class="content">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow dark">Programme preview</p>
+            <h2 id="workshops-title">Choose the support your project needs now.</h2>
+          </div>
+          <div class="filter-group" role="group" aria-label="Filter workshops">
+            <button class="filter-button is-active" type="button" data-filter="all" aria-pressed="true">All</button>
+            <button class="filter-button" type="button" data-filter="planning" aria-pressed="false">Planning</button>
+            <button class="filter-button" type="button" data-filter="evidence" aria-pressed="false">Evidence</button>
+            <button class="filter-button" type="button" data-filter="communication" aria-pressed="false">Communication</button>
+          </div>
+        </div>
+
+        <div class="workshop-grid">
+          {% for workshop in workshops %}
+          <article class="workshop-card" data-category="{{ workshop.category }}">
+            <div class="card-topline"><span>{{ workshop.category_label }}</span><span>Proposed</span></div>
+            <h3>{{ workshop.title }}</h3>
+            <p>{{ workshop.summary }}</p>
+            <ul class="learning-list">
+              {% for outcome in workshop.card_outcomes %}<li>{{ outcome }}</li>{% endfor %}
+            </ul>
+            <button class="text-button details-button" type="button" data-workshop="{{ workshop.slug }}">View details <span aria-hidden="true">&rarr;</span></button>
+          </article>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
+    <section class="section schedule-section" id="schedule" aria-labelledby="schedule-title">
+      <div class="content">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow dark">At a glance</p>
+            <h2 id="schedule-title">Compare the proposed sessions.</h2>
+          </div>
+          <p class="heading-note">Dates, times, venues, and delivery modes will be updated after official confirmation.</p>
+        </div>
+        <div class="table-wrap" tabindex="0" aria-label="Scrollable workshop schedule">
+          <table>
+            <thead>
+              <tr><th>Workshop</th><th>Date</th><th>Time</th><th>Format</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+              {% for workshop in workshops %}
+              <tr><td>{{ workshop.title }}</td><td>{{ workshop.date }}</td><td>{{ workshop.time }}</td><td>{{ workshop.format }}</td><td><span class="status">{{ workshop.status }}</span></td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="section steps-section" aria-labelledby="steps-title">
+      <div class="content">
+        <p class="eyebrow dark">How to participate</p>
+        <h2 id="steps-title">Three steps from interest to action.</h2>
+        <ol class="steps-list">
+          <li><span>1</span><div><h3>Explore</h3><p>Review the themes and identify the challenge closest to your current FYP stage.</p></div></li>
+          <li><span>2</span><div><h3>Choose</h3><p>Compare learning outcomes and check the official schedule once it is released.</p></div></li>
+          <li><span>3</span><div><h3>Register</h3><p>Use the official registration route. This prototype form demonstrates the intended experience.</p></div></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section faq-section" id="faq" aria-labelledby="faq-title">
+      <div class="content faq-layout">
+        <div>
+          <p class="eyebrow dark">Common questions</p>
+          <h2 id="faq-title">Before you take part.</h2>
+          <p>Official participation rules will take priority over the information shown in this prototype.</p>
+        </div>
+        <div class="faq-list">
+          <details>
+            <summary>Who are the workshops for?</summary>
+            <p>The proposed audience is UIC final-year undergraduate students currently working on an FYP.</p>
+          </details>
+          <details>
+            <summary>Can I attend more than one session?</summary>
+            <p>That depends on the final programme rules and capacity. Check the official announcement before registering.</p>
+          </details>
+          <details>
+            <summary>Are the sessions online or in person?</summary>
+            <p>The delivery mode has not yet been confirmed for this case-study prototype.</p>
+          </details>
+          <details>
+            <summary>What happens when I submit this form?</summary>
+            <p>The Flask backend validates the entry and saves it to the configured project database. It is still a case-study prototype, not an official UIC registration.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="section register-section" id="register" aria-labelledby="register-title">
+      <div class="content register-layout">
+        <div class="register-copy">
+          <p class="eyebrow">Take the next step</p>
+          <h2 id="register-title">Register interest or ask a question.</h2>
+          <p>Tell us which proposed session interests you. The Flask service checks the entry, stores it, and returns a reference number.</p>
+          <p class="demo-warning"><strong>Case-study database.</strong> Information entered here is saved to this project's database. Do not enter sensitive or confidential information.</p>
+        </div>
+
+        <form id="interest-form" class="interest-form" novalidate>
+          <fieldset class="mode-switch">
+            <legend>What would you like to do?</legend>
+            <label><input type="radio" name="requestType" value="Register interest" checked><span>Register interest</span></label>
+            <label><input type="radio" name="requestType" value="Make an enquiry"><span>Make an enquiry</span></label>
+          </fieldset>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="full-name">Full name</label>
+              <input id="full-name" name="fullName" type="text" autocomplete="name" required minlength="2" aria-describedby="name-error">
+              <small class="error" id="name-error"></small>
+            </div>
+            <div class="field">
+              <label for="email">Email address</label>
+              <input id="email" name="email" type="email" autocomplete="email" required aria-describedby="email-error">
+              <small class="error" id="email-error"></small>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="workshop-select">Workshop</label>
+            <select id="workshop-select" name="workshop" required aria-describedby="workshop-error">
+              <option value="">Choose a proposed workshop</option>
+              {% for workshop in workshops %}<option value="{{ workshop.slug }}">{{ workshop.title }}</option>{% endfor %}
+            </select>
+            <small class="error" id="workshop-error"></small>
+          </div>
+
+          <div class="field">
+            <label for="message">Question or note <span>(optional)</span></label>
+            <textarea id="message" name="message" rows="4" maxlength="500" aria-describedby="message-help"></textarea>
+            <small id="message-help"><span id="character-count">0</span>/500 characters</small>
+          </div>
+
+          <label class="consent">
+            <input id="demo-consent" name="demoConsent" type="checkbox" required aria-describedby="consent-error">
+            <span>I understand this is a case-study form and my entry will be stored in the project database.</span>
+          </label>
+          <small class="error consent-error" id="consent-error"></small>
+
+          <button class="button button-submit" type="submit">Submit entry <span aria-hidden="true">&rarr;</span></button>
+          <div id="form-feedback" class="form-feedback" role="status" aria-live="polite" tabindex="-1"></div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="content footer-layout">
+      <div>
+        <strong>UIC FYP Research Workshops</strong>
+        <p>Student case-study prototype. Not an official registration website.</p>
+      </div>
+      <nav aria-label="Footer navigation">
+        <a href="#about">About</a><a href="#workshops">Workshops</a><a href="#schedule">Schedule</a><a href="#faq">FAQ</a>
+      </nav>
+      <a class="back-to-top" href="#top" aria-label="Back to top">&uarr;</a>
+    </div>
+  </footer>
+
+  <dialog id="workshop-dialog" class="workshop-dialog" aria-labelledby="dialog-title">
+    <button class="dialog-close" type="button" aria-label="Close workshop details">&times;</button>
+    <p class="eyebrow dark" id="dialog-category"></p>
+    <h2 id="dialog-title"></h2>
+    <p id="dialog-description"></p>
+    <h3>What you will work on</h3>
+    <ul id="dialog-outcomes"></ul>
+    <button class="button button-primary dialog-register" type="button">Register interest <span aria-hidden="true">&rarr;</span></button>
+  </dialog>
+</body>
+</html>
