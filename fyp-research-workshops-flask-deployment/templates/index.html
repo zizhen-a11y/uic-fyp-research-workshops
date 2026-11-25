@@ -22,7 +22,7 @@
             page.searchParams.getAll(key).length !== 1) return;
       }
       if (page.hash && !["#top", "#main-content", "#about", "#workshops", "#schedule",
-                         "#faq", "#register", "#primary-nav"].includes(page.hash)) return;
+                         "#faq", "#register", "#booking-preview", "#data-handling", "#primary-nav"].includes(page.hash)) return;
       const config = {
         page_location: page.origin + "/" + page.search,
         page_referrer: document.referrer ? new URL(document.referrer).origin + "/" : "",
@@ -49,7 +49,7 @@
   <a class="skip-link" href="#main-content">Skip to content</a>
 
   <div class="notice" role="status">
-    <strong>Prototype website:</strong> session dates and registration routes are pending official confirmation.
+    <strong>Prototype website:</strong> All example dates, roles, capacities and processes are for demonstration only. Official arrangements are pending.
   </div>
 
   <header class="site-header">
@@ -159,16 +159,27 @@
             <p class="eyebrow dark">At a glance</p>
             <h2 id="schedule-title">Compare the proposed sessions.</h2>
           </div>
-          <p class="heading-note">Use the project stage to compare sessions. Dates, times, formats, durations and facilitators are awaiting confirmation.</p>
+          <p class="heading-note">The dates, times, durations, formats, roles and capacities below are fictional examples. Official arrangements have yet to be confirmed.</p>
         </div>
         <div class="table-wrap" tabindex="0" aria-label="Scrollable workshop schedule">
           <table>
             <thead>
-              <tr><th scope="col">Workshop</th><th scope="col">Project stage</th><th scope="col">Schedule status</th></tr>
+              <tr><th scope="col">Workshop</th><th scope="col">Project stage</th><th scope="col">Example session</th></tr>
             </thead>
             <tbody>
               {% for workshop in workshops %}
-              <tr><th scope="row">{{ workshop.title }}</th><td>{{ workshop.stage }}</td><td><span class="status">{{ workshop.date }}</span></td></tr>
+              <tr>
+                <th scope="row">{{ workshop.title }}</th>
+                <td>{{ workshop.stage }}</td>
+                <td>
+                  <span class="status">Example only</span>
+                  <div class="schedule-example">
+                    <strong>{{ workshop.example_session.date_time }}</strong> · {{ workshop.example_session.duration_minutes }} minutes · {{ workshop.example_session.mode }}<br>
+                    Facilitator role: {{ workshop.example_session.facilitator_role }}<br>
+                    Capacity: {{ workshop.example_session.capacity }} places
+                  </div>
+                </td>
+              </tr>
               {% endfor %}
             </tbody>
           </table>
@@ -183,7 +194,7 @@
         <ol class="steps-list">
           <li><span>1</span><div><h3>Explore</h3><p>Review the themes and identify the challenge closest to your current FYP stage.</p></div></li>
           <li><span>2</span><div><h3>Choose</h3><p>Compare learning outcomes and check the official schedule once it is released.</p></div></li>
-          <li><span>3</span><div><h3>Register interest</h3><p>Use the prototype form to express interest or ask a question. Check official UIC announcements for confirmed sessions and booking details.</p></div></li>
+          <li><span>3</span><div><h3>Register interest</h3><p>Use the prototype form to express interest or ask a question. See the <a href="#booking-preview">example booking and notification process</a>.</p></div></li>
         </ol>
       </div>
     </section>
@@ -206,7 +217,7 @@
           </details>
           <details>
             <summary>Are the sessions online or in person?</summary>
-            <p>The delivery mode has not yet been confirmed for this case-study prototype.</p>
+            <p>The example schedule shows both delivery formats. The actual mode and venue remain unconfirmed.</p>
           </details>
           <details>
             <summary>What should I prepare?</summary>
@@ -215,6 +226,21 @@
           <details>
             <summary>What happens when I submit this form?</summary>
             <p>The prototype saves your entry and shows a reference number. A place is only confirmed through the official UIC booking process. The prototype sends no automatic email.</p>
+          </details>
+          <details id="booking-preview" open>
+            <summary>Official booking, replies and email notifications</summary>
+            <p><strong>Official booking link</strong> · Pending. Bookings are currently unavailable.</p>
+            <p><strong>Example process</strong> · An organiser checks the enquiry queue. The example reply target is two working days. If the schedule is confirmed, a notification could include the date, preparation notes and an official booking link. The prototype has no staffed inbox or reply commitment.</p>
+            <blockquote class="example-message">
+              <strong>Sample notification · message preview only</strong><br>
+              Thanks for expressing interest. Once a session is confirmed, this message would include the verified time and the formal booking link. Your interest reference identifies your original entry.
+            </blockquote>
+          </details>
+          <details id="data-handling" open>
+            <summary>Data use, retention and deletion</summary>
+            <p><strong>Current prototype</strong> · The project database stores the form entry to demonstrate submission. Use invented names, example email addresses and sample messages. No fixed retention period or automatic deletion operates in this prototype.</p>
+            <p><strong>Example policy</strong> · Authorised organisers would use the records to review enquiries and manage interest, keep them for up to 30 days after the programme, and delete them at the end of that period.</p>
+            <p><strong>Example deletion request</strong> · Use a verified organiser contact, provide the entry reference, and ask for confirmation after deletion. No organiser contact or deletion request channel has been published for this prototype.</p>
           </details>
         </div>
       </div>
@@ -229,7 +255,7 @@
           {% if ga4_id %}
           <p class="source-note"><strong>Website analytics.</strong> We use Google Analytics to measure visits, workshop selections and form activity. Google Analytics may use cookies. We send the type of successful request, but keep your name, email, message and reference number out of analytics.</p>
           {% endif %}
-          <p class="demo-warning"><strong>Case-study database.</strong> Information entered here is saved to this project's database. Do not enter sensitive or confidential information.</p>
+          <p class="demo-warning"><strong>Case-study database.</strong> This demonstration stores form entries. Use an invented name and an example email address. Read the <a href="#data-handling">data handling and deletion example</a>.</p>
         </div>
 
         <form id="interest-form" class="interest-form" novalidate>
@@ -303,6 +329,7 @@
     <dl class="dialog-planning">
       <dt>Suggested preparation</dt><dd id="dialog-prepare"></dd>
       <dt>Proposed takeaway</dt><dd id="dialog-takeaway"></dd>
+      <dt>Example session details</dt><dd id="dialog-example"></dd>
     </dl>
     <button class="button button-primary dialog-register" type="button">Register interest <span aria-hidden="true">&rarr;</span></button>
   </dialog>

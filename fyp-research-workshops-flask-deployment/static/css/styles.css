@@ -332,6 +332,12 @@ details p { padding: 0 54px 24px 0; color: var(--muted); }
 
 .card-stage { margin-bottom: 0.35rem; font-weight: 700; }
 .schedule-section table { min-width: 0; }
+.schedule-example { margin-top: 0.5rem; line-height: 1.5; }
+.example-message { margin: 0.75rem 0; padding: 0.75rem 1rem; border-left: 3px solid var(--line); }
+.demo-warning a { color: inherit; text-decoration: underline; }
+@media (max-width: 520px) {
+  .schedule-section th, .schedule-section td { padding: 0.7rem; }
+}
 .schedule-section tbody th { text-align: left; letter-spacing: normal; text-transform: none; }
 .dialog-planning { display: grid; gap: 0.25rem; margin: 0 0 1.3rem; }
 .dialog-planning dt { font-weight: 700; }

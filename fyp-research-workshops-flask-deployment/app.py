@@ -17,6 +17,13 @@ csrf = CSRFProtect()
 WORKSHOPS = [
     {
         "slug": "question",
+        "example_session": {
+            "date_time": "7 December, 14:00",
+            "duration_minutes": 60,
+            "mode": "In person",
+            "facilitator_role": "Research Methods Tutor",
+            "capacity": 20,
+        },
         "stage": "Choosing a topic",
         "prepare": "Bring a broad topic and one constraint you need to work around.",
         "takeaway": "A draft question and a scope checklist.",
@@ -38,6 +45,13 @@ WORKSHOPS = [
     },
     {
         "slug": "sources",
+        "example_session": {
+            "date_time": "9 December, 15:00",
+            "duration_minutes": 60,
+            "mode": "Online",
+            "facilitator_role": "Academic Skills Librarian",
+            "capacity": 24,
+        },
         "stage": "Reviewing literature",
         "prepare": "Bring a draft question or two keywords you have already tried.",
         "takeaway": "A search plan and criteria for checking sources.",
@@ -59,6 +73,13 @@ WORKSHOPS = [
     },
     {
         "slug": "data",
+        "example_session": {
+            "date_time": "11 December, 14:00",
+            "duration_minutes": 75,
+            "mode": "In person",
+            "facilitator_role": "Data Skills Tutor",
+            "capacity": 20,
+        },
         "stage": "Planning a method",
         "prepare": "Bring your question and a short description of the evidence you can access.",
         "takeaway": "A question-to-evidence map and notes on responsible data handling.",
@@ -80,6 +101,13 @@ WORKSHOPS = [
     },
     {
         "slug": "writing",
+        "example_session": {
+            "date_time": "14 December, 15:00",
+            "duration_minutes": 60,
+            "mode": "Online",
+            "facilitator_role": "Writing and Presentation Coach",
+            "capacity": 24,
+        },
         "stage": "Writing or presenting",
         "prepare": "Bring a draft outline or the finding you want to explain.",
         "takeaway": "A revised outline or a short plan for presenting a finding.",
@@ -165,6 +193,7 @@ def create_app(test_config: dict | None = None) -> Flask:
                 "outcomes": item["outcomes"],
                 "prepare": item["prepare"],
                 "takeaway": item["takeaway"],
+                "example_session": item["example_session"],
             }
             for item in WORKSHOPS
         }

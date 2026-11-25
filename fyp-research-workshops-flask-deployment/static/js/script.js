@@ -64,6 +64,9 @@ document.querySelectorAll(".details-button").forEach((button) => {
     dialogDescription.textContent = workshop.description;
     document.querySelector("#dialog-prepare").textContent = workshop.prepare;
     document.querySelector("#dialog-takeaway").textContent = workshop.takeaway;
+    const example = workshop.example_session;
+    document.querySelector("#dialog-example").textContent =
+      `${example.date_time} · ${example.duration_minutes} minutes · ${example.mode} · ${example.facilitator_role} · ${example.capacity} places. Example only.`;
     dialogOutcomes.replaceChildren(...workshop.outcomes.map((outcome) => {
       const item = document.createElement("li");
       item.textContent = outcome;
