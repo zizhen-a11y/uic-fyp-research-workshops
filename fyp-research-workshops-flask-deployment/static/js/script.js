@@ -32,6 +32,9 @@ const workshopCards = document.querySelectorAll(".workshop-card");
 filterButtons.forEach((button) => {
   button.addEventListener("click", () => {
     const selected = button.dataset.filter;
+    if (button.getAttribute("aria-pressed") !== "true") {
+      window.gtag?.("event", "workshop_filter_selected", { workshop_category: selected });
+    }
     filterButtons.forEach((item) => {
       const active = item === button;
       item.classList.toggle("is-active", active);
@@ -59,12 +62,15 @@ document.querySelectorAll(".details-button").forEach((button) => {
     dialogCategory.textContent = `${workshop.category} | Programme preview`;
     dialogTitle.textContent = workshop.title;
     dialogDescription.textContent = workshop.description;
+    document.querySelector("#dialog-prepare").textContent = workshop.prepare;
+    document.querySelector("#dialog-takeaway").textContent = workshop.takeaway;
     dialogOutcomes.replaceChildren(...workshop.outcomes.map((outcome) => {
       const item = document.createElement("li");
       item.textContent = outcome;
       return item;
     }));
     dialog.showModal();
+    window.gtag?.("event", "workshop_details_opened", { workshop_id: activeWorkshopSlug });
   });
 });
 
@@ -75,12 +81,22 @@ dialog.addEventListener("click", (event) => {
 document.querySelector(".dialog-register").addEventListener("click", () => {
   const select = document.querySelector("#workshop-select");
   select.value = activeWorkshopSlug;
+  requestTypeInputs[0].checked = true;
+  updateSubmitLabel();
   dialog.close();
   document.querySelector("#register").scrollIntoView({ behavior: "smooth" });
   window.setTimeout(() => select.focus(), 450);
 });
 
 const form = document.querySelector("#interest-form");
+let formStarted = false;
+function recordFormStart(event) {
+  if (formStarted || !event.target.matches("input:not([type=hidden]), textarea, select")) return;
+  formStarted = true;
+  window.gtag?.("event", "interest_form_started");
+}
+form.addEventListener("input", recordFormStart);
+form.addEventListener("change", recordFormStart);
 const fullName = document.querySelector("#full-name");
 const email = document.querySelector("#email");
 const workshopSelect = document.querySelector("#workshop-select");
@@ -89,6 +105,16 @@ const message = document.querySelector("#message");
 const characterCount = document.querySelector("#character-count");
 const feedback = document.querySelector("#form-feedback");
 const submitButton = form.querySelector("button[type='submit']");
+const submitLabel = submitButton.querySelector(".submit-label");
+const requestTypeInputs = form.querySelectorAll("[name='requestType']");
+function updateSubmitLabel() {
+  submitLabel.textContent = requestTypeInputs[1].checked ? "Send enquiry" : "Register interest";
+}
+requestTypeInputs.forEach((input) => input.addEventListener("change", updateSubmitLabel));
+document.querySelector("[data-enquiry-link]").addEventListener("click", () => {
+  requestTypeInputs[1].checked = true;
+  updateSubmitLabel();
+});
 const csrfToken = document.querySelector("meta[name='csrf-token']").content;
 
 message.addEventListener("input", () => {
@@ -145,6 +171,7 @@ function applyServerErrors(errors = {}) {
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
+  if (submitButton.disabled) return;
   feedback.classList.remove("is-visible", "is-error");
 
   let valid = true;
@@ -182,7 +209,7 @@ form.addEventListener("submit", async (event) => {
   };
 
   submitButton.disabled = true;
-  submitButton.textContent = "Saving...";
+  submitLabel.textContent = "Saving...";
 
   try {
     const response = await fetch("/api/registrations", {
@@ -201,13 +228,22 @@ form.addEventListener("submit", async (event) => {
       return;
     }
 
-    showFeedback(`${result.message} Reference: ${result.reference}. Workshop: ${result.workshop}.`);
+    showFeedback(`${result.message} Reference: ${result.reference}. Workshop: ${result.workshop}. Check official UIC announcements for booking details. This reference identifies your prototype entry.`);
+    if (response.status === 201 && result.reference && result.requestType === payload.requestType) {
+      const type = result.requestType;
+      if (type === "Register interest" || type === "Make an enquiry") {
+        window.gtag?.("event", "interest_form_success", {
+          request_type: type === "Register interest" ? "register_interest" : "make_an_enquiry"
+        });
+      }
+    }
     form.reset();
+    formStarted = false;
     characterCount.textContent = "0";
   } catch (_error) {
     showFeedback("The service is currently unavailable. Check your connection and try again.", true);
   } finally {
     submitButton.disabled = false;
-    submitButton.innerHTML = `Submit entry <span aria-hidden="true">&rarr;</span>`;
+    updateSubmitLabel();
   }
 });

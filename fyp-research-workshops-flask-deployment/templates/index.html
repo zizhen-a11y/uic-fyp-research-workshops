@@ -6,7 +6,41 @@
   <meta name="description" content="Explore prototype UIC FYP Research Workshops for final-year undergraduate students.">
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>UIC FYP Research Workshops</title>
-  <link rel="preload" href="{{ url_for('static', filename='assets/research-workshop-hero.png') }}" as="image">
+  {% if ga4_id %}
+  <meta name="referrer" content="strict-origin">
+  <script>
+    (() => {
+      const page = new URL(window.location.href);
+      const approved = {
+        utm_source: ["wechat", "instagram", "email", "qr"],
+        utm_medium: ["social", "email", "qr", "referral"],
+        utm_campaign: ["phase1a_baseline", "fyp_workshop_demo"]
+      };
+      // Skip measurement on unrecognised landing URLs before loading Google's script.
+      for (const [key, value] of page.searchParams) {
+        if (!Object.hasOwn(approved, key) || !approved[key].includes(value) ||
+            page.searchParams.getAll(key).length !== 1) return;
+      }
+      if (page.hash && !["#top", "#main-content", "#about", "#workshops", "#schedule",
+                         "#faq", "#register", "#primary-nav"].includes(page.hash)) return;
+      const config = {
+        page_location: page.origin + "/" + page.search,
+        page_referrer: document.referrer ? new URL(document.referrer).origin + "/" : "",
+        allow_google_signals: false,
+        allow_ad_personalization_signals: false
+      };
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function () { window.dataLayer.push(arguments); };
+      window.gtag("js", new Date());
+      window.gtag("config", {{ ga4_id | tojson }}, config);
+      const tag = document.createElement("script");
+      tag.async = true;
+      tag.src = "https://www.googletagmanager.com/gtag/js?id={{ ga4_id }}";
+      document.head.appendChild(tag);
+    })();
+  </script>
+  {% endif %}
+  <link rel="preload" href="{{ url_for('static', filename='assets/research-workshop-hero.webp') }}" as="image">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
   <script>window.WORKSHOP_DATA = {{ workshop_data | tojson }};</script>
   <script src="{{ url_for('static', filename='js/script.js') }}" defer></script>
@@ -32,7 +66,7 @@
         <a href="#workshops">Workshops</a>
         <a href="#schedule">Schedule</a>
         <a href="#faq">FAQ</a>
-        <a class="nav-cta" href="#register">Register</a>
+        <a class="nav-cta" href="#register">Register interest</a>
       </nav>
     </div>
   </header>
@@ -46,12 +80,12 @@
         <p class="hero-lead">Build a focused question, work with stronger evidence, and move your final-year project forward with practical research support.</p>
         <div class="hero-actions">
           <a class="button button-primary" href="#workshops">Explore workshops <span aria-hidden="true">&rarr;</span></a>
-          <a class="button button-secondary" href="#register">Make an enquiry</a>
+          <a class="button button-secondary" href="#register" data-enquiry-link>Make an enquiry</a>
         </div>
         <dl class="hero-facts" aria-label="Programme highlights">
           <div><dt>{{ workshops | length }}</dt><dd>research themes</dd></div>
           <div><dt>Practical</dt><dd>guided activities</dd></div>
-          <div><dt>Flexible</dt><dd>choose what fits</dd></div>
+          <div><dt>By project stage</dt><dd>find a starting point</dd></div>
         </dl>
       </div>
     </section>
@@ -106,6 +140,7 @@
           <article class="workshop-card" data-category="{{ workshop.category }}">
             <div class="card-topline"><span>{{ workshop.category_label }}</span><span>Proposed</span></div>
             <h3>{{ workshop.title }}</h3>
+            <p class="card-stage">{{ workshop.stage }}</p>
             <p>{{ workshop.summary }}</p>
             <ul class="learning-list">
               {% for outcome in workshop.card_outcomes %}<li>{{ outcome }}</li>{% endfor %}
@@ -124,16 +159,16 @@
             <p class="eyebrow dark">At a glance</p>
             <h2 id="schedule-title">Compare the proposed sessions.</h2>
           </div>
-          <p class="heading-note">Dates, times, venues, and delivery modes will be updated after official confirmation.</p>
+          <p class="heading-note">Use the project stage to compare sessions. Dates, times, formats, durations and facilitators are awaiting confirmation.</p>
         </div>
         <div class="table-wrap" tabindex="0" aria-label="Scrollable workshop schedule">
           <table>
             <thead>
-              <tr><th>Workshop</th><th>Date</th><th>Time</th><th>Format</th><th>Status</th></tr>
+              <tr><th scope="col">Workshop</th><th scope="col">Project stage</th><th scope="col">Schedule status</th></tr>
             </thead>
             <tbody>
               {% for workshop in workshops %}
-              <tr><td>{{ workshop.title }}</td><td>{{ workshop.date }}</td><td>{{ workshop.time }}</td><td>{{ workshop.format }}</td><td><span class="status">{{ workshop.status }}</span></td></tr>
+              <tr><th scope="row">{{ workshop.title }}</th><td>{{ workshop.stage }}</td><td><span class="status">{{ workshop.date }}</span></td></tr>
               {% endfor %}
             </tbody>
           </table>
@@ -148,7 +183,7 @@
         <ol class="steps-list">
           <li><span>1</span><div><h3>Explore</h3><p>Review the themes and identify the challenge closest to your current FYP stage.</p></div></li>
           <li><span>2</span><div><h3>Choose</h3><p>Compare learning outcomes and check the official schedule once it is released.</p></div></li>
-          <li><span>3</span><div><h3>Register</h3><p>Use the official registration route. This prototype form demonstrates the intended experience.</p></div></li>
+          <li><span>3</span><div><h3>Register interest</h3><p>Use the prototype form to express interest or ask a question. Check official UIC announcements for confirmed sessions and booking details.</p></div></li>
         </ol>
       </div>
     </section>
@@ -174,8 +209,12 @@
             <p>The delivery mode has not yet been confirmed for this case-study prototype.</p>
           </details>
           <details>
+            <summary>What should I prepare?</summary>
+            <p>Open a workshop's details for suggested preparation and a proposed takeaway. These activities are examples for the programme preview.</p>
+          </details>
+          <details>
             <summary>What happens when I submit this form?</summary>
-            <p>The Flask backend validates the entry and saves it to the configured project database. It is still a case-study prototype, not an official UIC registration.</p>
+            <p>The prototype saves your entry and shows a reference number. A place is only confirmed through the official UIC booking process. The prototype sends no automatic email.</p>
           </details>
         </div>
       </div>
@@ -186,7 +225,10 @@
         <div class="register-copy">
           <p class="eyebrow">Take the next step</p>
           <h2 id="register-title">Register interest or ask a question.</h2>
-          <p>Tell us which proposed session interests you. The Flask service checks the entry, stores it, and returns a reference number.</p>
+          <p>Choose a proposed session and leave an expression of interest or a question. The reference number identifies your prototype entry.</p>
+          {% if ga4_id %}
+          <p class="source-note"><strong>Website analytics.</strong> We use Google Analytics to measure visits, workshop selections and form activity. Google Analytics may use cookies. We send the type of successful request, but keep your name, email, message and reference number out of analytics.</p>
+          {% endif %}
           <p class="demo-warning"><strong>Case-study database.</strong> Information entered here is saved to this project's database. Do not enter sensitive or confidential information.</p>
         </div>
 
@@ -231,7 +273,7 @@
           </label>
           <small class="error consent-error" id="consent-error"></small>
 
-          <button class="button button-submit" type="submit">Submit entry <span aria-hidden="true">&rarr;</span></button>
+          <button class="button button-submit" type="submit"><span class="submit-label">Register interest</span> <span aria-hidden="true">&rarr;</span></button>
           <div id="form-feedback" class="form-feedback" role="status" aria-live="polite" tabindex="-1"></div>
         </form>
       </div>
@@ -258,6 +300,10 @@
     <p id="dialog-description"></p>
     <h3>What you will work on</h3>
     <ul id="dialog-outcomes"></ul>
+    <dl class="dialog-planning">
+      <dt>Suggested preparation</dt><dd id="dialog-prepare"></dd>
+      <dt>Proposed takeaway</dt><dd id="dialog-takeaway"></dd>
+    </dl>
     <button class="button button-primary dialog-register" type="button">Register interest <span aria-hidden="true">&rarr;</span></button>
   </dialog>
 </body>

@@ -117,7 +117,7 @@ img { max-width: 100%; display: block; }
   overflow: hidden;
   isolation: isolate;
   color: var(--white);
-  background: var(--ink) url("../assets/research-workshop-hero.png") center / cover no-repeat;
+  background: var(--ink) url("../assets/research-workshop-hero.webp") center / cover no-repeat;
 }
 .hero-overlay { position: absolute; inset: 0; z-index: -1; background: rgba(10, 24, 29, 0.58); }
 .hero-content { padding-block: 72px; }
@@ -329,3 +329,10 @@ details p { padding: 0 54px 24px 0; color: var(--muted); }
   html { scroll-behavior: auto; }
   *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
 }
+
+.card-stage { margin-bottom: 0.35rem; font-weight: 700; }
+.schedule-section table { min-width: 0; }
+.schedule-section tbody th { text-align: left; letter-spacing: normal; text-transform: none; }
+.dialog-planning { display: grid; gap: 0.25rem; margin: 0 0 1.3rem; }
+.dialog-planning dt { font-weight: 700; }
+.dialog-planning dd { margin: 0 0 0.45rem; color: var(--muted); }

@@ -85,3 +85,10 @@ This remains a student case-study prototype and is not an official UIC registrat
 ## Image generation record
 
 The hero image was created with the built-in OpenAI image generation tool. Prompt summary: a wide, documentary-style university research workshop with students collaborating in a modern seminar room, people placed toward the right, clear space for hero copy, no branding, no legible text, and no watermark.
+
+## Render classroom deployment
+
+Use the existing Python Web Service and set its Root Directory to this folder.
+Keep the existing authorized database configuration. Environment variables belong
+in Render, including a random SECRET_KEY of at least 32 characters and the
+optional GA4_MEASUREMENT_ID. The public health endpoint is /health.

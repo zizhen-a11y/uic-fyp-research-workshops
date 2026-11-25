@@ -17,6 +17,9 @@ csrf = CSRFProtect()
 WORKSHOPS = [
     {
         "slug": "question",
+        "stage": "Choosing a topic",
+        "prepare": "Bring a broad topic and one constraint you need to work around.",
+        "takeaway": "A draft question and a scope checklist.",
         "category": "planning",
         "category_label": "Planning",
         "title": "From Topic to Research Question",
@@ -35,6 +38,9 @@ WORKSHOPS = [
     },
     {
         "slug": "sources",
+        "stage": "Reviewing literature",
+        "prepare": "Bring a draft question or two keywords you have already tried.",
+        "takeaway": "A search plan and criteria for checking sources.",
         "category": "evidence",
         "category_label": "Evidence",
         "title": "Finding and Evaluating Sources",
@@ -53,6 +59,9 @@ WORKSHOPS = [
     },
     {
         "slug": "data",
+        "stage": "Planning a method",
+        "prepare": "Bring your question and a short description of the evidence you can access.",
+        "takeaway": "A question-to-evidence map and notes on responsible data handling.",
         "category": "evidence",
         "category_label": "Evidence",
         "title": "Working with Data and Evidence",
@@ -71,6 +80,9 @@ WORKSHOPS = [
     },
     {
         "slug": "writing",
+        "stage": "Writing or presenting",
+        "prepare": "Bring a draft outline or the finding you want to explain.",
+        "takeaway": "A revised outline or a short plan for presenting a finding.",
         "category": "communication",
         "category_label": "Communication",
         "title": "Writing and Presenting the FYP",
@@ -121,10 +133,17 @@ def create_app(test_config: dict | None = None) -> Flask:
 
     default_database = f"sqlite:///{Path(app.instance_path) / 'workshops.db'}"
     database_url = normalise_database_url(os.getenv("DATABASE_URL", default_database))
+    on_render = os.getenv("RENDER") == "true"
+    secret_key = os.getenv("SECRET_KEY", "").strip()
+    if on_render and (len(secret_key) < 32 or secret_key == "replace-with-a-long-random-value"):
+        raise RuntimeError("Set a random SECRET_KEY of at least 32 characters in Render Environment.")
+
     app.config.from_mapping(
-        SECRET_KEY=os.getenv("SECRET_KEY", "development-only-change-me"),
+        SECRET_KEY=secret_key or "development-only-change-me",
+        SESSION_COOKIE_SECURE=on_render,
         SQLALCHEMY_DATABASE_URI=database_url,
         SQLALCHEMY_TRACK_MODIFICATIONS=False,
+        GA4_MEASUREMENT_ID=os.getenv("GA4_MEASUREMENT_ID", "").strip(),
         MAX_CONTENT_LENGTH=16 * 1024,
     )
     if test_config:
@@ -144,6 +163,8 @@ def create_app(test_config: dict | None = None) -> Flask:
                 "title": item["title"],
                 "description": item["description"],
                 "outcomes": item["outcomes"],
+                "prepare": item["prepare"],
+                "takeaway": item["takeaway"],
             }
             for item in WORKSHOPS
         }
@@ -151,6 +172,9 @@ def create_app(test_config: dict | None = None) -> Flask:
             "index.html",
             workshops=WORKSHOPS,
             workshop_data=workshop_data,
+            ga4_id=app.config["GA4_MEASUREMENT_ID"] if re.fullmatch(
+                r"G-[A-Z0-9]+", app.config["GA4_MEASUREMENT_ID"]
+            ) else None,
         )
 
     @app.get("/api/workshops")
